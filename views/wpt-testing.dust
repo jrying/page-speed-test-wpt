@@ -1,0 +1,49 @@
+<html>
+<head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script type="text/javascript" src="/javascripts/wpt-testing.js"></script>
+<link href="/stylesheets/wpt-testing.css" type="text/css" rel="stylesheet">
+</head>
+<body>
+    <div class="page">
+        <div id="main">
+
+            <form>
+                Test Url: <input type="text" name="test_url" size="100" value="https://www.yahoo.com/"></input><br>
+                Runs: <select type="select" class="select1-10" name="runs" value="Repeat the test"></select><br>
+                <input type="button" onclick="executeTest()" value="Execute Test"></input>
+            </form>
+            <hr>
+            <div class="result">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+
+ 
+function initialize() {
+    var select1_10 = "";
+    for (i = 1; i <= 10; i++){
+        select1_10 += "<option value=" + i + ">" + i + "</option>"
+    }
+    $('.select1-10').html(select1_10);
+}
+
+function executeTest() {
+    var config = {};
+    config.testurl = document.getElementsByName('test_url')[0].value;
+    config.runs = document.getElementsByName('runs')[0].value;
+    var test = new wpt(config);
+    test.sendRunRequest();
+}
+
+function writeTestResult(result) {
+    $('.result').html(result);
+}
+
+initialize();
+
+
+</script>
