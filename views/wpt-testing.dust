@@ -50,20 +50,16 @@ function writeTestResult(result) {
 }
 
 function testDisplayIncomplete() {
-    var test = new wpt(config),
-    config = {};
-    config.testurl = '.';
-    config.runs = '1';
+    var config = {'testurl': '.', 'runs': 1},
+        test = new wpt(config);
     test.dispatchRunResponse(exampleRunResponse); 
     test.dispatchResultResponse(exampleIncompleteResponse); 
     test.finish();
 }
 
 function testDisplayResult() {
-    var test = new wpt(config),
-    config = {};
-    config.testurl = '.';
-    config.runs = '1';
+    var config = {'testurl': '.', 'runs': 1},
+        test = new wpt(config);
     test.dispatchRunResponse(exampleRunResponse); 
     test.dispatchResultResponse(exampleResultResponse); 
     test.finish();
