@@ -9,6 +9,7 @@ var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
 var cons = require('consolidate');
+var socketio = require('socket.io');
 
 var app = express();
 
@@ -37,3 +38,13 @@ app.get('/users', user.list);
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+/*
+socketio.listen(server).on('connection', function (socket) {
+	socket.on('wpt-execute', function (info) {
+		console.log('Start executes wpt test: ', JSON.stringify(info));
+		//socket.broadcast.emit('message', msg);
+	});
+});
+*/
+
+

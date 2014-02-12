@@ -3,6 +3,34 @@ var publicWptHost = 'www.webpagetest.org';
 var privateWptHost = 'mirador.corp.yahoo.com';
 var publicWptKey = '718f56a5c3d74b9cb5059adfcd7e3da9';
 
+var exampleRunResponse = {"statusCode":200,"statusText":"Ok","data":{"testId":"140211_X6_2J8","ownerKey":"c8d71b4eb0351bbeb108926533167e8cf7560db6","jsonUrl":"http://www.webpagetest.org/jsonResult.php?test=140211_X6_2J8","xmlUrl":"http://www.webpagetest.org/xmlResult/140211_X6_2J8/","userUrl":"http://www.webpagetest.org/result/140211_X6_2J8/","summaryCSV":"http://www.webpagetest.org/result/140211_X6_2J8/page_data.csv","detailCSV":"http://www.webpagetest.org/result/140211_X6_2J8/requests.csv"}},
+	exampleIncompleteResponse,
+	exampleResultResponse;
+
+function getExampleResultResponse (callback) {
+	if(!exampleResultResponse) {
+		exampleResultResponse = $.getJSON("/json/exampleResultResponse_run3.json", function(json) {
+			exampleResultResponse = json;
+			callback(exampleResultResponse);
+		})
+	}
+	else {
+		callback(exampleResultResponse);
+	}
+}
+
+function getExampleIncompleteResponse (callback) {
+	if(!exampleIncompleteResponse) {
+		exampleIncompleteResponse = $.getJSON("/json/exampleIncompleteResponse.json", function(json) {
+			exampleIncompleteResponse = json;
+			callback(exampleIncompleteResponse);
+		})
+	}
+	else {
+		callback(exampleIncompleteResponse);
+	}
+}
+
 function wpt(config){
     this.config = config;
     this.objRun = {};
@@ -66,18 +94,20 @@ wpt.prototype.dispatchRunResponse = function(response){
 
 wpt.prototype.dispatchResultResponse = function(response){
     if(!response.data) return;
+    var content = '';
     this.objResult = response;
 
     this.testInfo.startTime = response.data.startTime || this.testInfo.startTime || '';
     this.testInfo.status = response.data.statusText || response.statusText || this.testInfo.status || '';
 
     // Render header
-    this.objResult.info = this.renderHtmlInfo(response.data);
+    content += this.renderHtmlInfo(response.data);
 
     // Render body when test is finished
     if(response.statusCode == 200){
-        this.objResult.result = this.renderHtmlResult(response.data);
+        content += this.renderHtmlResult(response.data);
     }
+    this.objResult.content = content;
 }
 
 
@@ -116,12 +146,10 @@ wpt.prototype.finish = function(result){
     result = result || this.objResult;
     if(result.statusCode == 200){
         this.isTestFinished = true;
-        writeTestInfo(this.config.executeId, result.info);
-        writeTestResult(this.config.executeId, result.result);
-        endTest();
+        endTest(result.content);
         return;
     }
-    writeTestInfo(this.config.executeId, result.info);
+    writeTestResult(this.config.executeId, result.content);
 }
 
 wpt.prototype.renderHtmlInfo = function(){
@@ -175,30 +203,4 @@ wpt.prototype.renderHtmlResult = function(data){
     return content;
 };
 
-/* Test set */
-var exampleRunResponse = {"statusCode":200,"statusText":"Ok","data":{"testId":"140211_X6_2J8","ownerKey":"c8d71b4eb0351bbeb108926533167e8cf7560db6","jsonUrl":"http://www.webpagetest.org/jsonResult.php?test=140211_X6_2J8","xmlUrl":"http://www.webpagetest.org/xmlResult/140211_X6_2J8/","userUrl":"http://www.webpagetest.org/result/140211_X6_2J8/","summaryCSV":"http://www.webpagetest.org/result/140211_X6_2J8/page_data.csv","detailCSV":"http://www.webpagetest.org/result/140211_X6_2J8/requests.csv"}},
-	exampleIncompleteResponse,
-	exampleResultResponse_1,
-	exampleResultResponse_2;
 
-function getJson (paramName, fileName, callback) {
-	if(!paramName) {
-		paramName = $.getJSON(fileName, function(json) {
-			paramName = json;
-			callback(paramName);
-		})
-	}
-	else {
-		callback(paramName);
-	}
-}
-function getExampleResultResponse_1 (callback) {
-	getJson(exampleResultResponse_1, "/json/exampleResultResponse_run3_1.json", callback);
-}
-function getExampleResultResponse_2 (callback) {
-	getJson(exampleResultResponse_2, "/json/exampleResultResponse_run3_2.json", callback);
-}
-function getExampleIncompleteResponse (callback) {
-	getJson(exampleIncompleteResponse, "/json/exampleIncompleteResponse.json", callback);
-}
-/* End of Test set */
