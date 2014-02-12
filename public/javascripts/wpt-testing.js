@@ -122,6 +122,8 @@ wpt.prototype.finish = function(result){
     result = result || this.objResult;
     if(result.statusCode == 200){
         this.isTestFinished = true;
+        endTest(result.content);
+        return;
     }
     writeTestResult(result.content);
 }
@@ -146,10 +148,10 @@ wpt.prototype.renderHtmlEntry = function(data){
                 '<td id="fvVisual">' + data.SpeedIndex.toFixed(2) + '</td>' +
                 '<td id="fvDomElements">' + data.domElements + '</td>' +
                 '<td id="fvDocComplete" class="border">' + (data.docTime/1000).toFixed(3) + 's</td>' +
-                '<td id="fvRequestsDoc">' + data.requestsDoc || ''+ '</td>' +
+                '<td id="fvRequestsDoc">' + (data.requestsDoc || '')+ '</td>' +
                 '<td id="fvBytesDoc">' + data.bytesInDoc.toFixed(2) + ' KB</td>' +
                 '<td id="fvFullyLoaded" class="border">' + (data.fullyLoaded/1000).toFixed(3) + 's</td>' +
-                '<td id="fvRequests">' + (data.requests ? data.requests.length : '') || '' + '</td>' +
+                '<td id="fvRequests">' + ((data.requests ? data.requests.length : '') || '') + '</td>' +
                 '<td id="fvBytes">' + data.bytesIn.toFixed(2) + ' KB</td>';
 
     content += '</tr>';
@@ -172,7 +174,10 @@ wpt.prototype.renderHtmlResult = function(data){
     content += this.renderHtmlEntry(data.average.firstView);
     data.median.firstView.run = 'Median';
     content += this.renderHtmlEntry(data.median.firstView);
-    content += '</table>'
+    content += '</table>';
+    content += '<hr>';
+    content += '<img scr="' + data.median.images.waterfall + '">';
     return content;
 };
+
 
