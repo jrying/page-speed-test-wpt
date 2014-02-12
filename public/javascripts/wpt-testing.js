@@ -118,7 +118,7 @@ wpt.prototype.finish = function(result){
         this.isTestFinished = true;
         writeTestInfo(this.config.executeId, result.info);
         writeTestResult(this.config.executeId, result.result);
-        endTest();
+        endTest(this.config.executeId, this.objResult.summary);
         return;
     }
     writeTestInfo(this.config.executeId, result.info);
@@ -141,10 +141,10 @@ wpt.prototype.renderHtmlEntry = function(data){
                 '<td id="fvLoadTime">' + (data.loadTime/1000).toFixed(3) + 's</td>' +
                 '<td id="fvTTFB">' + (data.TTFB/1000).toFixed(3) + 's</td>' +
                 '<td id="fvStartRender">' + (data.render/1000).toFixed(3) + 's</td>' +
-                '<td id="fvVisual">' + data.SpeedIndex.toFixed(2) + '</td>' +
-                '<td id="fvDomElements">' + data.domElements + '</td>' +
+                '<td id="fvVisual">' + (data.SpeedIndex?data.SpeedIndex:0).toFixed(2) + '</td>' +
+                '<td id="fvDomElements">' + (data.domElements).toFixed(2) + '</td>' +
                 '<td id="fvDocComplete" class="border">' + (data.docTime/1000).toFixed(3) + 's</td>' +
-                '<td id="fvRequestsDoc">' + (data.requestsDoc || '')+ '</td>' +
+                '<td id="fvRequestsDoc">' + (data.requestsDoc || '').toFixed(2)+ '</td>' +
                 '<td id="fvBytesDoc">' + data.bytesInDoc.toFixed(2) + ' KB</td>' +
                 '<td id="fvFullyLoaded" class="border">' + (data.fullyLoaded/1000).toFixed(3) + 's</td>' +
                 '<td id="fvRequests">' + ((data.requests ? data.requests.length : '') || '') + '</td>' +
@@ -157,7 +157,7 @@ return content;
 wpt.prototype.renderHtmlResult = function(data){
     if(!data || !data.runs) return '';
     var content = '',
-        tableheader = '<tr> <th class="empty" style="border:1px white solid;"></th> <th class="empty" colspan="5"></th> <th class="border" colspan="3">Document Complete</th> <th class="border" colspan="3">Fully Loaded</th></tr>'+
+        tableheader = '<tr> <th class="" style="border:1px white solid;" colspan="3">' + this.config.testurl + '</th> <th class="empty" colspan="3"></th> <th class="border" colspan="3">Document Complete</th> <th class="border" colspan="3">Fully Loaded</th></tr>'+
                       '<tr> <th>Run</th> <th>Load Time</th> <th>First Byte</th> <th>Start Render</th> <th><a href="https://sites.google.com/a/webpagetest.org/docs/using-webpagetest/metrics/speed-index" target="_blank">Speed Index</a></th> <th>DOM Elements</th> <th class="border">Time</th> <th>Requests</th> <th>Bytes In</th> <th class="border">Time</th> <th>Requests</th> <th>Bytes In</th> </tr>',
         labels = [''];
     content += '<table class="pretty">'
@@ -167,7 +167,8 @@ wpt.prototype.renderHtmlResult = function(data){
         content += this.renderHtmlEntry(item);
     }
     data.average.firstView.run = 'Average';
-    content += this.renderHtmlEntry(data.average.firstView);
+    this.objResult.summary = this.renderHtmlEntry(data.average.firstView);
+    content += this.objResult.summary;
     data.median.firstView.run = 'Median';
     content += this.renderHtmlEntry(data.median.firstView);
     content += '</table>';
@@ -200,5 +201,8 @@ function getExampleResultResponse_2 (callback) {
 }
 function getExampleIncompleteResponse (callback) {
 	getJson(exampleIncompleteResponse, "/json/exampleIncompleteResponse.json", callback);
+}
+function getExampleResultResponse_failed (callback) {
+	getJson(exampleResultResponse_failed, "/json/exampleResultResponse_run3_failed.json", callback);
 }
 /* End of Test set */

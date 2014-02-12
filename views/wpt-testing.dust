@@ -7,22 +7,23 @@
 <body>
     <div class="page">
         <div id="main">
-            <form>
-                Test Url 1: <input type="text" name="test_url_1" size="100" value="https://www.yahoo.com/"><br>
-                Test Url 2: <input type="text" name="test_url_2" size="100" value="https://www.google.com/"><br>
+            <form>                
+                <input type="button" name="add_test_entry" onclick="addTestEntry()" value="Add test entry">
+                <div id="testEntries">
+                Test 1: Enter a valid Url <input type="text" name="test_url_1" size="100" value="https://www.yahoo.com/"> <br>
+                Test 2: Enter a valid Url <input type="text" name="test_url_2" size="100" value="https://www.google.com/">
+                <br>
+                </div>
                 Runs: <select type="select"  name="runs" class="select1-10" value="Repeat the test"></select><br>
                 <input type="button" name="execute" onclick="executeTests()" value="Execute Test">
             </form>
             <hr>
-            <div class="info">
-                <div class="info_blick info_1"></div>
-                <div class="info_blick info_2"></div>
+            <div id="info">
             </div>
-            <div class="result">
+            <div id="result">
+                <div class="result_block summary"></div>
                 {>"wpt-testing-partial/info" /}
                 {>"wpt-testing-partial/table" /}
-                <div class="result_1"></div>
-                <div class="result_2"></div>
             </div>
         </div>
     </div>
@@ -40,16 +41,17 @@ function initialize() {
 var _testCount = 1;
 var _executingTests = [];
 var _temp;
+var _testEntryCount = 2;
 function executeTest(config) {
     _temp = new wpt(config);
     _temp.sendRunRequest();
-    _executingTests[config.executeId] = {'instance': _temp, 'config': config, 'finished': false}
+    _executingTests[config.executeId] = {'instance': _temp, 'config': config, 'finished': false, 'summary': ''}
 }
 
 function executeTests() {
     var runs = document.getElementsByName('runs')[0].value;
     var index = 1;
-    while (document.getElementsByName('test_url_' + index)[0]){
+    while (document.getElementsByName('test_url_' + index)[0] && document.getElementsByName('test_url_' + index)[0].value){
         var urlElement = document.getElementsByName('test_url_' + index)[0];
         if(urlElement.value){
             executeTest({'executeId': index, 'runs': runs, 'testurl': urlElement.value});
@@ -60,28 +62,61 @@ function executeTests() {
     document.getElementsByName('execute')[0].disabled = true;
 }
 
-function endTest(executeId, result) {
-    if(_executingTests[executeId]) _executingTests[executeId].finished = true;
+function endTest(executeId, summary) {
+    if(_executingTests[executeId]) {
+        _executingTests[executeId].summary = summary;
+        _executingTests[executeId].finished = true;
+    }
     _testCount -= 1;
-    writeTestResult(executeId, result);
     if(_testCount == 0) {endTests()}
 }
 
 function endTests() {
     document.getElementsByName('execute')[0].disabled = false;
+    var target = $('#result .summary');
+    target.html(renderHtmlSummary());
 }
 
 function writeTestInfo(executeId, result) {
-    var target = $('.info .info_' + executeId);
-    if (target){
-        target.html(result);
+    var target = $('#info .info_' + executeId);
+    if (!target.length){
+        $('#info').append('<div class="info_blick info_' + executeId + '"></div>');
+        target = $('#info .info_' + executeId);
     }
+    target.html(result);
 }
 
 function writeTestResult(executeId, result) {
-    var target = $('.result .result_' + executeId);
-    if (target){
-        target.html(result);
+    var target = $('#result .result_' + executeId);
+    if (!target.length){
+        $('#result').append('<div class="result_block result_' + executeId + '"></div>');
+        target = $('#result .result_' + executeId);
+    }
+    target.html(result);
+}
+
+function renderHtmlSummary(){
+    var i = 1,
+    content = '',
+    tableheader = '<tr> <th class="" style="border:1px white solid;" colspan="3">Summary</th> <th class="empty" colspan="3"></th> <th class="border" colspan="3">Document Complete</th> <th class="border" colspan="3">Fully Loaded</th></tr>'+
+                  '<tr> <th>Run</th> <th>Load Time</th> <th>First Byte</th> <th>Start Render</th> <th><a href="https://sites.google.com/a/webpagetest.org/docs/using-webpagetest/metrics/speed-index" target="_blank">Speed Index</a></th> <th>DOM Elements</th> <th class="border">Time</th> <th>Requests</th> <th>Bytes In</th> <th class="border">Time</th> <th>Requests</th> <th>Bytes In</th> </tr>';
+    
+    content += '<table class="pretty">';
+    content += tableheader;
+    while(_executingTests[i]){
+        content += _executingTests[i].summary;
+        i += 1;
+    }
+    content += '</table>';
+    content += '<hr>';
+    return content;
+}
+
+function addTestEntry(){
+    var target = $('#testEntries');
+    if(target) {
+        _testEntryCount += 1;
+        target.append('Test ' + _testEntryCount + ': Enter a valid Url <input type="text" name="test_url_' + _testEntryCount + '" size="100" value=""> <br>');
     }
 }
 
@@ -107,6 +142,18 @@ function testDisplayResult() {
     });
     getExampleResultResponse_2(function(json){
         config = {'testurl': 'http://www.google.com', 'runs': 3, 'executeId': 2};
+        var test = new wpt(config);
+        test.dispatchRunResponse(json); 
+        test.dispatchResultResponse(json); 
+        test.finish();
+    });
+    endTests();
+}
+
+function testDisplayFailedResult() {
+    var config;
+    getExampleResultResponse_failed(function(json){
+        config = {'testurl': 'http://www.yahoo.com', 'runs': 3, 'executeId': 1};
         var test = new wpt(config);
         test.dispatchRunResponse(json); 
         test.dispatchResultResponse(json); 
