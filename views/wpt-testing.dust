@@ -14,6 +14,8 @@
             </form>
             <hr>
             <div class="result">
+            {>"wpt-testing-partial/info" /}
+            {>"wpt-testing-partial/table" /}
             </div>
         </div>
     </div>
@@ -52,17 +54,21 @@ function writeTestResult(result) {
 function testDisplayIncomplete() {
     var config = {'testurl': '.', 'runs': 1},
         test = new wpt(config);
-    test.dispatchRunResponse(exampleRunResponse); 
-    test.dispatchResultResponse(exampleIncompleteResponse); 
-    test.finish();
+    getExampleIncompleteResponse(function(json){
+        test.dispatchRunResponse(json); 
+        test.dispatchResultResponse(json); 
+        test.finish();
+    })
 }
 
 function testDisplayResult() {
     var config = {'testurl': '.', 'runs': 1},
         test = new wpt(config);
-    test.dispatchRunResponse(exampleRunResponse); 
-    test.dispatchResultResponse(exampleResultResponse); 
-    test.finish();
+    getExampleResultResponse(function(json){
+        test.dispatchRunResponse(json); 
+        test.dispatchResultResponse(json); 
+        test.finish();
+    })
 }
 
 initialize();

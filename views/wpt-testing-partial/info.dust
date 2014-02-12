@@ -1,0 +1,9 @@
+{#info}
+<ul>
+	<li>Test Id: {testId}</li>
+	<li>Report Url: <a href="{reportUrl}">link</a></li>
+	<li>Start Time: {startTime}</li>
+	<li>Status: {status}</li>
+	<li>Runs: {runs}</li>
+</ul>
+{/info}
