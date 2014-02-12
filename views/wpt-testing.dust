@@ -7,11 +7,10 @@
 <body>
     <div class="page">
         <div id="main">
-
             <form>
                 Test Url: <input type="text" name="test_url" size="100" value="https://www.yahoo.com/"></input><br>
-                Runs: <select type="select" class="select1-10" name="runs" value="Repeat the test"></select><br>
-                <input type="button" onclick="executeTest()" value="Execute Test"></input>
+                Runs: <select type="select"  name="runs" class="select1-10" value="Repeat the test"></select><br>
+                <input type="button" name="execute" onclick="executeTest()" value="Execute Test"></input>
             </form>
             <hr>
             <div class="result">
@@ -35,12 +34,39 @@ function executeTest() {
     var config = {};
     config.testurl = document.getElementsByName('test_url')[0].value;
     config.runs = document.getElementsByName('runs')[0].value;
+    document.getElementsByName('execute')[0].disabled = true;
     var test = new wpt(config);
     test.sendRunRequest();
+    document.selectexecute
+}
+
+function endTest(result) {
+    document.getElementsByName('execute')[0].disabled = false;
+    writeTestResult(result);
 }
 
 function writeTestResult(result) {
     $('.result').html(result);
+}
+
+function testDisplayIncomplete() {
+    var test = new wpt(config),
+    config = {};
+    config.testurl = '.';
+    config.runs = '1';
+    test.dispatchRunResponse(exampleRunResponse); 
+    test.dispatchResultResponse(exampleIncompleteResponse); 
+    test.finish();
+}
+
+function testDisplayResult() {
+    var test = new wpt(config),
+    config = {};
+    config.testurl = '.';
+    config.runs = '1';
+    test.dispatchRunResponse(exampleRunResponse); 
+    test.dispatchResultResponse(exampleResultResponse); 
+    test.finish();
 }
 
 initialize();
