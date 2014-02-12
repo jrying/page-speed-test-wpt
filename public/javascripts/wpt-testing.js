@@ -141,7 +141,7 @@ wpt.prototype.renderHtmlInfo = function(){
 }
 wpt.prototype.renderHtmlEntry = function(data){
     var content = '<tr>';
-    content +=  '<td align="left">' + data.run || '' + '</td>' +
+    content +=  '<td align="left">' + (data.run || '') + '</td>' +
                 '<td id="fvLoadTime">' + (data.loadTime/1000).toFixed(3) + 's</td>' +
                 '<td id="fvTTFB">' + (data.TTFB/1000).toFixed(3) + 's</td>' +
                 '<td id="fvStartRender">' + (data.render/1000).toFixed(3) + 's</td>' +
