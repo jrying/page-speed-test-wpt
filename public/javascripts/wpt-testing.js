@@ -176,7 +176,6 @@ wpt.prototype.renderHtmlResult = function(data){
     content += this.renderHtmlEntry(data.median.firstView);
     content += '</table>';
     content += '<hr>';
-    content += '<img scr="' + data.median.images.waterfall + '">';
     return content;
 };
 
