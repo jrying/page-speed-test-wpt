@@ -157,7 +157,7 @@ return content;
 wpt.prototype.renderHtmlResult = function(data){
     if(!data || !data.runs) return '';
     var content = '',
-        tableheader = '<tr> <th class="" style="border:1px white solid;" colspan="3">' + this.config.testurl + '</th> <th class="empty" colspan="3"></th> <th class="border" colspan="3">Document Complete</th> <th class="border" colspan="3">Fully Loaded</th></tr>'+
+        tableheader = '<tr> <th class="" style="border:1px white solid;" colspan="5">' + this.config.testurl + '</th> <th class="empty" colspan="1"></th> <th class="border" colspan="3">Document Complete</th> <th class="border" colspan="3">Fully Loaded</th></tr>'+
                       '<tr> <th>Run</th> <th>Load Time</th> <th>First Byte</th> <th>Start Render</th> <th><a href="https://sites.google.com/a/webpagetest.org/docs/using-webpagetest/metrics/speed-index" target="_blank">Speed Index</a></th> <th>DOM Elements</th> <th class="border">Time</th> <th>Requests</th> <th>Bytes In</th> <th class="border">Time</th> <th>Requests</th> <th>Bytes In</th> </tr>',
         labels = [''];
     content += '<table class="pretty">'

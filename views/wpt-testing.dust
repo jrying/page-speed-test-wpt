@@ -104,7 +104,7 @@ function renderHtmlSummary(){
     content += '<table class="pretty">';
     content += tableheader;
     while(_executingTests[i]){
-        content += _executingTests[i].summary;
+        content += _executingTests[i].summary.replace("Average", _executingTests[i].config.testurl);
         i += 1;
     }
     content += '</table>';
