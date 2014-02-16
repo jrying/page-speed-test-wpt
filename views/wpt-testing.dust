@@ -2,6 +2,8 @@
 <head>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
     <script type="text/javascript" src="/javascripts/wpt-testing.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
     <link href="/stylesheets/wpt-testing.css" type="text/css" rel="stylesheet">
 </head>
 <body>
@@ -42,6 +44,7 @@ var _testCount = 1;
 var _executingTests = [];
 var _temp;
 var _testEntryCount = 2;
+
 function executeTest(config) {
     _temp = new wpt(config);
     _temp.sendRunRequest();
@@ -51,7 +54,7 @@ function executeTest(config) {
 function executeTests() {
     var runs = document.getElementsByName('runs')[0].value;
     var index = 1;
-    while (document.getElementsByName('test_url_' + index)[0] && document.getElementsByName('test_url_' + index)[0].value){
+    while (document.getElementsByName('test_url_' + index)[0] && document.getElementsByName('test_url_' + index)[0].value) {
         var urlElement = document.getElementsByName('test_url_' + index)[0];
         if(urlElement.value){
             executeTest({'executeId': index, 'runs': runs, 'testurl': urlElement.value});

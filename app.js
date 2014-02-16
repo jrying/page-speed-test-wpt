@@ -35,16 +35,16 @@ app.get('/', routes.index);
 app.get('/wpt-testing', routes.wptTesting);
 app.get('/users', user.list);
 
-http.createServer(app).listen(app.get('port'), function(){
+server = http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
-/*
+
 socketio.listen(server).on('connection', function (socket) {
-	socket.on('wpt-execute', function (info) {
+	socket.on('execute', function (info) {
 		console.log('Start executes wpt test: ', JSON.stringify(info));
 		//socket.broadcast.emit('message', msg);
 	});
 });
-*/
+
 
 
